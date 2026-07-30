@@ -1,0 +1,25 @@
+{{ partial "header.html" . }}
+
+<h1>{{ .Title | markdownify }}</h1>
+
+{{ .Content }}
+
+{{ $categories := slice "Mathematics" "Machine Learning" "Reading Notes & Thoughts" "Tools" }}
+
+{{ range $categories }}
+  {{ $cat := . }}
+  {{ $posts := where $.Pages "Params.blogCategory" $cat }}
+  {{ if $posts }}
+<h3>{{ $cat }}</h3>
+<table class="entry-list">
+  {{ range $posts }}
+  <tr>
+    <td class="entry-left">{{ .Date.Format "02 January 2006" }}</td>
+    <td class="entry-right"><a href="{{ .RelPermalink }}">{{ .Title | markdownify }}</a></td>
+  </tr>
+  {{ end }}
+</table>
+  {{ end }}
+{{ end }}
+
+{{ partial "footer.html" . }}

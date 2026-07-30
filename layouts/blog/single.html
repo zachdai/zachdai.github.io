@@ -1,0 +1,30 @@
+{{ partial "header.html" . }}
+
+<div class="blog-layout">
+
+  <div class="blog-content">
+    <div class="article-meta">
+      <h1>{{ .Title | markdownify }}</h1>
+      <p class="meta-line"><em>{{ with .Params.author }}{{ . }}{{ end }}{{ if and .Params.author .Date }}, {{ end }}{{ if (gt .Params.date 0) }}{{ .Date.Format "02 January 2006" }}{{ end }}</em></p>
+    </div>
+
+    <main>
+    {{ .Content }}
+    </main>
+  </div>
+
+  <div class="toc-aside">
+    {{ if gt (len .TableOfContents) 50 }}
+    <nav class="toc">
+      <ul>
+        <li class="toc-h1"><a href="#">{{ .Title | markdownify }}</a>
+          {{ .TableOfContents }}
+        </li>
+      </ul>
+    </nav>
+    {{ end }}
+  </div>
+
+</div>
+
+{{ partial "footer.html" . }}

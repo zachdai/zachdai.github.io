@@ -1,0 +1,33 @@
+{{ partial "header.html" . }}
+
+<h1>{{ .Title | markdownify }}</h1>
+
+{{ .Content }}
+
+{{/* Gather distinct years from projectCategory, sorted descending */}}
+{{ $years := slice }}
+{{ range .Pages }}
+  {{ $y := .Params.projectCategory }}
+  {{ if and $y (not (in $years $y)) }}
+    {{ $years = $years | append $y }}
+  {{ end }}
+{{ end }}
+{{ $years = sort $years "value" "desc" }}
+
+{{ range $years }}
+  {{ $y := . }}
+  {{ $posts := where $.Pages "Params.projectCategory" $y }}
+  {{ if $posts }}
+<h3>{{ $y }}</h3>
+<table class="entry-list">
+  {{ range $posts }}
+  <tr>
+    <td class="entry-left">{{ .Date.Format "02 January 2006" }}</td>
+    <td class="entry-right"><a href="{{ .RelPermalink }}">{{ .Title | markdownify }}</a></td>
+  </tr>
+  {{ end }}
+</table>
+  {{ end }}
+{{ end }}
+
+{{ partial "footer.html" . }}

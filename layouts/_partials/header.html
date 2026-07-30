@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="{{ .Site.LanguageCode }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ .Title }} | {{ .Site.Title }}</title>
+    <link rel="stylesheet" href="{{ "css/style.css" | relURL }}" />
+    {{ partial "head_custom.html" . }}
+  </head>
+
+  <body>
+    <nav class="site-nav">
+    <ul class="menu">
+      {{ $currentURL := .RelPermalink }}
+      {{ range .Site.Menus.main }}
+      {{ $isHome := or (eq .URL "") (eq .URL "/") }}
+      {{ $active := or
+        (and $isHome (eq $currentURL "/"))
+        (and (not $isHome) (hasPrefix $currentURL (.URL | relURL)))
+      }}
+      <li><a href="{{ .URL | relURL }}"{{ if $active }} class="active"{{ end }}>{{ .Name }}</a></li>
+      {{ end }}
+    </ul>
+    <hr/>
+    </nav>

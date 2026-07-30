@@ -1,0 +1,90 @@
+{{ partial "header.html" . }}
+
+<h1>{{ .Title | markdownify }}</h1>
+
+{{ .Content }}
+
+{{/* Collect pages by category */}}
+{{ $selected  := where .Pages "Params.pubCategory" "selected" }}
+{{ $manuscript := where .Pages "Params.pubCategory" "manuscript" }}
+
+{{/* Collect all year-based pages */}}
+{{ $yearPages := slice }}
+{{ range .Pages }}
+  {{ if and (ne .Params.pubCategory "selected") (ne .Params.pubCategory "manuscript") (ne .Params.pubCategory nil) }}
+    {{ $yearPages = $yearPages | append . }}
+  {{ end }}
+{{ end }}
+
+{{/* Gather distinct years, sorted descending */}}
+{{ $years := slice }}
+{{ range $yearPages }}
+  {{ $y := .Params.pubCategory }}
+  {{ if not (in $years $y) }}
+    {{ $years = $years | append $y }}
+  {{ end }}
+{{ end }}
+{{ $years = sort $years "value" "desc" }}
+
+{{ if $selected }}
+<h3>Selected Publications</h3>
+<table class="entry-list">
+{{ range $selected }}
+<tr>
+  <td class="entry-left">{{ .Params.venue }}</td>
+  <td class="entry-right">
+    {{ $title := .Title | markdownify }}
+    {{ if .Params.externalUrl }}
+    <a href="{{ .Params.externalUrl }}" target="_blank" rel="noopener noreferrer">{{ $title }}</a>
+    {{ else }}
+    <a href="{{ .RelPermalink }}">{{ $title }}</a>
+    {{ end }}
+  </td>
+</tr>
+{{ end }}
+</table>
+{{ end }}
+
+{{ range $years }}
+  {{ $y := . }}
+  {{ $ps := where $yearPages "Params.pubCategory" $y }}
+  {{ if $ps }}
+<h3>{{ $y }}</h3>
+<table class="entry-list">
+  {{ range $ps }}
+  <tr>
+    <td class="entry-left">{{ .Params.venue }}</td>
+    <td class="entry-right">
+      {{ $title := .Title | markdownify }}
+      {{ if .Params.externalUrl }}
+      <a href="{{ .Params.externalUrl }}" target="_blank" rel="noopener noreferrer">{{ $title }}</a>
+      {{ else }}
+      <a href="{{ .RelPermalink }}">{{ $title }}</a>
+      {{ end }}
+    </td>
+  </tr>
+  {{ end }}
+</table>
+  {{ end }}
+{{ end }}
+
+{{ if $manuscript }}
+<h3>Manuscript</h3>
+<table class="entry-list">
+{{ range $manuscript }}
+<tr>
+  <td class="entry-left">{{ .Params.venue }}</td>
+  <td class="entry-right">
+    {{ $title := .Title | markdownify }}
+    {{ if .Params.externalUrl }}
+    <a href="{{ .Params.externalUrl }}" target="_blank" rel="noopener noreferrer">{{ $title }}</a>
+    {{ else }}
+    <a href="{{ .RelPermalink }}">{{ $title }}</a>
+    {{ end }}
+  </td>
+</tr>
+{{ end }}
+</table>
+{{ end }}
+
+{{ partial "footer.html" . }}
